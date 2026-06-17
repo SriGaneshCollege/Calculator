@@ -1,27 +1,55 @@
+from flask import Flask, request
 from calculator import add, subtract, multiply, divide
 
-print("Simple Calculator")
-print("1. Add")
-print("2. Subtract")
-print("3. Multiply")
-print("4. Divide")
+app = Flask(__name__)
 
-choice = input("Enter your choice (1-4): ")
+@app.route('/')
+def home():
+    return """
+    <h2>Simple Calculator</h2>
 
-num1 = float(input("Enter first number: "))
-num2 = float(input("Enter second number: "))
+    <form action="/calculate">
+        Number 1:
+        <input type="number" name="a" required><br><br>
 
-if choice == "1":
-    print("Result:", add(num1, num2))
+        Number 2:
+        <input type="number" name="b" required><br><br>
 
-elif choice == "2":
-    print("Result:", subtract(num1, num2))
+        Operation:
+        <select name="op">
+            <option value="add">Add</option>
+            <option value="subtract">Subtract</option>
+            <option value="multiply">Multiply</option>
+            <option value="divide">Divide</option>
+        </select><br><br>
 
-elif choice == "3":
-    print("Result:", multiply(num1, num2))
+        <input type="submit" value="Calculate">
+    </form>
+    """
 
-elif choice == "4":
-    print("Result:", divide(num1, num2))
+@app.route('/calculate')
+def calculate():
 
-else:
-    print("Invalid choice")
+    a = float(request.args.get('a'))
+    b = float(request.args.get('b'))
+    op = request.args.get('op')
+
+    if op == "add":
+        result = add(a, b)
+
+    elif op == "subtract":
+        result = subtract(a, b)
+
+    elif op == "multiply":
+        result = multiply(a, b)
+
+    elif op == "divide":
+        result = divide(a, b)
+
+    else:
+        result = "Invalid Operation"
+
+    return f"<h2>Result: {result}</h2>"
+
+if __name__ == "__main__":
+    app.run()
